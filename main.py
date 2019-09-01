@@ -51,8 +51,12 @@ def h():
     cursor.execute('SELECT * FROM blogs')
     results = cursor.fetchall()
     posts = []
-    for i in range(2):
-        posts.append(Post(results[i]))
+    if len(results) > 2:
+        for i in range(2):
+            posts.append(Post(results[i]))
+    else:
+        for post in results:
+            posts.append(Post(post))
     return render_template('index.html', params=params, posts=posts)
 
 
@@ -63,8 +67,12 @@ def home():
     cursor.execute('SELECT * FROM blogs')
     results = cursor.fetchall()
     posts = []
-    for i in range(2):
-        posts.append(Post(results[i]))
+    if len(results) > 2:
+        for i in range(2):
+            posts.append(Post(results[i]))
+    else:
+        for post in results:
+            posts.append(Post(post))
     return render_template('index.html', params=params, posts=posts)
 
 
@@ -82,7 +90,7 @@ def contact():
         email = request.form.get('email')
         phone = request.form.get('phone')
         message = request.form.get('message')
-        insert = "INSERT INTO users(Name,Phone,Email,Message) VALUES("+ name + ', '+ phone +',' +email+ ','+message+');'
+        insert = 'INSERT INTO users(Name,Phone,Email,Message) VALUES("' + name + '","' + phone + '","' + email + '","' + message + '");'
         print(insert)
         cursor.execute(insert)
         connection.commit()
@@ -100,7 +108,7 @@ def contact():
 def post_route(post_slug='gann-strategy'):
     connection = pymysql.connect(host=host, user=user, passwd=passwd, database=database)
     cursor = connection.cursor()
-    insert = 'Select * from blogs where slug='+post_slug+';'
+    insert = 'Select * from blogs where slug="'+post_slug+'";'
     cursor.execute(insert)
     result = cursor.fetchone()
     post = Post(result)
@@ -147,7 +155,7 @@ def edit_post(id):
         posts.append(Post(post))
 
     if id:
-        insert = f'Select * from blogs where id={id};'
+        insert = 'Select * from blogs where id=' + str(id) + ';'
         cursor.execute(insert)
         result = cursor.fetchone()
         post = Post(result)
@@ -159,11 +167,11 @@ def edit_post(id):
             content = request.form.get('content')
             img_file = request.form.get('img_file')
             slug = request.form.get('slug')
-            date = datetime.now()
+            date = str(datetime.now())
             if id == 0:
-                insert = 'insert into blogs (Heading,sub_heading,Content,img_file,slug,Date) values('+ heading +","+sub_heading+","+content+","+img_file+","+slug+","+date+');'
+                insert = 'insert into blogs (Heading,sub_heading,Content,img_file,slug,Date) values("' + heading + '","' + sub_heading + '","' + content + '","' + img_file + '","' + slug + '","' + date +'");'
             else:
-                insert = 'update blogs set Heading='+heading+",sub_heading="+sub_heading+",Content="+content+",img_file="+img_file+",slug="+slug+",Date="+date+"  where id="+ id +';'
+                insert = 'update blogs set Heading="'+heading+'",sub_heading="'+sub_heading+'",Content="'+content+'",img_file="'+img_file+'",slug="'+slug+'",Date="'+date+'"  where id='+ str(id) +';'
             cursor.execute(insert)
             connection.commit()
             cursor.close()
@@ -180,7 +188,7 @@ def delete_post(id):
     print("id : "+str(id))
     connection = pymysql.connect(host=host, user=user, passwd=passwd, database=database)
     cursor = connection.cursor()
-    insert = 'delete from blogs where id='+id+';'
+    insert = 'delete from blogs where id='+str(id)+';'
     cursor.execute(insert)
     connection.commit()
     insert = 'select * from blogs'
@@ -212,5 +220,4 @@ def logout():
     return render_template('login.html', params=params)
 
 
-app.run(host='0.0.0.0', port=5000, debug=True)
-
+app.run(host='0.0.0.0' , port=5000, debug=True)
