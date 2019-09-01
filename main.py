@@ -82,7 +82,7 @@ def contact():
         email = request.form.get('email')
         phone = request.form.get('phone')
         message = request.form.get('message')
-        insert = f"INSERT INTO users(Name,Phone,Email,Message) VALUES('{name}', '{phone}','{email}','{message}');"
+        insert = "INSERT INTO users(Name,Phone,Email,Message) VALUES("+ name + ', '+ phone +',' +email+ ','+message+');'
         print(insert)
         cursor.execute(insert)
         connection.commit()
@@ -100,7 +100,7 @@ def contact():
 def post_route(post_slug='gann-strategy'):
     connection = pymysql.connect(host=host, user=user, passwd=passwd, database=database)
     cursor = connection.cursor()
-    insert = f'Select * from blogs where slug="{post_slug}";'
+    insert = 'Select * from blogs where slug='+post_slug+';'
     cursor.execute(insert)
     result = cursor.fetchone()
     post = Post(result)
@@ -139,7 +139,7 @@ def edit_post(id):
     connection = pymysql.connect(host=host, user=user, passwd=passwd, database=database)
     cursor = connection.cursor()
     post = None
-    insert = f'Select * from blogs;'
+    insert = 'Select * from blogs;'
     cursor.execute(insert)
     results = cursor.fetchall()
     posts = []
@@ -161,9 +161,9 @@ def edit_post(id):
             slug = request.form.get('slug')
             date = datetime.now()
             if id == 0:
-                insert = f'insert into blogs (Heading,sub_heading,Content,img_file,slug,Date) values("{heading}","{sub_heading}","{content}","{img_file}","{slug}","{date}");'
+                insert = 'insert into blogs (Heading,sub_heading,Content,img_file,slug,Date) values('+ heading +","+sub_heading+","+content+","+img_file+","+slug+","+date+');'
             else:
-                insert = f'update blogs set Heading="{heading}",sub_heading="{sub_heading}",Content="{content}",img_file="{img_file}",slug="{slug}",Date="{date}"  where id={id};'
+                insert = 'update blogs set Heading='+heading+",sub_heading="+sub_heading+",Content="+content+",img_file="+img_file+",slug="+slug+",Date="+date+"  where id="+ id +';'
             cursor.execute(insert)
             connection.commit()
             cursor.close()
@@ -180,10 +180,10 @@ def delete_post(id):
     print("id : "+str(id))
     connection = pymysql.connect(host=host, user=user, passwd=passwd, database=database)
     cursor = connection.cursor()
-    insert = f'delete from blogs where id={id};'
+    insert = 'delete from blogs where id='+id+';'
     cursor.execute(insert)
     connection.commit()
-    insert = f'select * from blogs'
+    insert = 'select * from blogs'
     cursor.execute(insert)
     result = cursor.fetchall()
     posts = []
